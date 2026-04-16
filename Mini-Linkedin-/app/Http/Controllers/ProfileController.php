@@ -15,7 +15,8 @@ class ProfileController extends Controller
             'disponible' => 'boolean'
         ]);
 
-// abdorahman lmodel smih Profil 
+// abdorahman lmodel smih Profil 🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
+
         $exists = Profil::where('user_id', $request->user_id)->first();
         if ($exists) {
             return response()->json(['message' => 'Profil déjà existant'], 409);
