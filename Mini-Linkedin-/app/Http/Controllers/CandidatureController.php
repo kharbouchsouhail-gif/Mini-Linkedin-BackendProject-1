@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Candidature;
@@ -7,32 +6,42 @@ use App\Models\Offre;
 use Illuminate\Http\Request;
 use App\Models\Profil;
 
-
 class CandidatureController extends Controller
 {
-
-
     public function store(Request $request, Offre $offre)
     {
-        # dans la param il ya Offre $offre il fait (SELECT * FROM offres WHERE id = ? ($offre))
         $request->validate([
-            'profil_id' => 'required|exists:profils,id',
             'message' => 'nullable|string'
         ]);
 
+        $user   = auth('api')->user();
+        $profil = Profil::where('user_id', $user->id)->firstOrFail();
+
+        // Prevent duplicate candidature
+        $exists = Candidature::where('offre_id', $offre->id)
+            ->where('profil_id', $profil->id)
+            ->exists();
+
+        if ($exists) {
+            return response()->json(['message' => 'Déjà candidaté'], 409);
+        }
+
         $candidature = Candidature::create([
-            'offre_id' => $offre->id,
-            'profil_id' => $request->profil_id,
-            'message' => $request->message,
-            'statut' => 'en_attente'
+            'offre_id'  => $offre->id,
+            'profil_id' => $profil->id,
+            'message'   => $request->message,
+            'statut'    => 'en_attente'
         ]);
 
-        return response()->json($candidature);
+        return response()->json($candidature, 201);
     }
 
     public function myApplications(Request $request)
     {
-        $candidatures = Candidature::where('profil_id', $request->profil_id)
+        $user   = auth('api')->user();
+        $profil = Profil::where('user_id', $user->id)->firstOrFail();
+
+        $candidatures = Candidature::where('profil_id', $profil->id)
             ->with('offre')
             ->get();
 
@@ -41,7 +50,6 @@ class CandidatureController extends Controller
 
     public function offreCandidatures(Offre $offre)
     {
-        # dans la param il ya Offre $offre il fait (SELECT * FROM offres WHERE id = ? ($offre))
         return response()->json(
             $offre->candidatures()->with('profil')->get()
         );
@@ -53,9 +61,7 @@ class CandidatureController extends Controller
             'statut' => 'required|in:en_attente,acceptee,refusee'
         ]);
 
-        $candidature->update([
-            'statut' => $request->statut
-        ]);
+        $candidature->update(['statut' => $request->statut]);
 
         return response()->json($candidature);
     }
