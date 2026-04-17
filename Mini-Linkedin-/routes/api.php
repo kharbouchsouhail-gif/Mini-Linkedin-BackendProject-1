@@ -58,7 +58,7 @@ Route::middleware('auth:api')->group(function () {
         Route::delete('/profil/competences/{competence}', [ProfileCompetenceController::class, 'destroy']);
 
         // Candidatures
-        Route::post('/offres/{offre}/candidater', [CandidatureController::class, 'store']);
+        Route::post('/offres/{offre}/candidature', [CandidatureController::class, 'store']);
         Route::get('/mes-candidatures',           [CandidatureController::class, 'myApplications']);
     });
 
