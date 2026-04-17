@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Offre;
 use Illuminate\Http\Request;
+use App\Models\Offre; // Assurez-vous d'importer le modèle Offre
+
 
 class OffreController extends Controller
 {
