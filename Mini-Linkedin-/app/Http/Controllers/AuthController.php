@@ -17,8 +17,8 @@ class AuthController extends Controller
         $data = $request -> validate ([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
-            'password' => 'required|string|min:8|confirmed',
             'role' => 'required|in:candidat,recruteur',
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
         $user = User::create([
@@ -26,6 +26,7 @@ class AuthController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'role' => $data['role'],
+            'password' => Hash::make($data['password']),
         ]);
 
         $token = JWTAuth::fromUser($user);
@@ -47,7 +48,7 @@ class AuthController extends Controller
             return response() -> json(['message' => 'Identifiants incorrects.'], 401);
         }
 
-        return $this->respondWithToken($token, auth('api')->user());
+        return $this->respondWithToken($token, auth('api')->user(), 201);
     }
 
 

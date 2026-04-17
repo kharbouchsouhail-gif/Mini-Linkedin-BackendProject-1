@@ -20,7 +20,8 @@ class Profil extends Model
 
     public function competences()
     {
-        return $this->belongsToMany(Competence::class)
+        # Added 'profil_competence' so the Eloquent knows the correct name
+        return $this->belongsToMany(Competence::class, 'profil_competence')
             ->withPivot('niveau');
     }
 

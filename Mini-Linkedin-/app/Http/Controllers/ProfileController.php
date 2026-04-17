@@ -7,36 +7,54 @@ use App\Models\Profil; // Assurez-vous d'importer le modèle Profil
 
 class ProfileController extends Controller
 {
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'titre' => 'required|string',
-            'bio' => 'nullable|string',
+            'titre'        => 'required|string',
+            'bio'          => 'nullable|string',
             'localisation' => 'nullable|string',
-            'disponible' => 'boolean'
+            'disponible'   => 'boolean'
         ]);
 
-// abdorahman lmodel smih Profil 🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
+        $user = auth('api')->user(); // ← get user from token
 
-        $exists = Profil::where('user_id', $request->user_id)->first();
+        // Check if profil already exists
+        $exists = Profil::where('user_id', $user->id)->first(); // ← use $user->id not $request->user_id
         if ($exists) {
             return response()->json(['message' => 'Profil déjà existant'], 409);
         }
 
-        $profil = Profil::create($request->all());
+        $profil = Profil::create([
+            'user_id'      => $user->id, // ← set it manually from auth
+            'titre'        => $request->titre,
+            'bio'          => $request->bio,
+            'localisation' => $request->localisation,
+            'disponible'   => $request->disponible ?? false,
+        ]);
 
-        return response()->json($profil);
+        return response()->json($profil, 201);
     }
 
     public function show(Request $request)
     {
-        $profil = Profil::with('competences')->first(); // simplifié
+        $user = auth('api')->user();
+
+        $profil = Profil::with('competences')
+                        ->where('user_id', $user->id)
+                        ->first();
+
+        if (!$profil) {
+            return response()->json(['message' => 'Profil introuvable.'], 404);
+        }
+
         return response()->json($profil);
     }
 
     public function update(Request $request)
     {
-        $profil = Profil::where('user_id', $request->user_id)->first();
+        $user = auth('api')->user(); // ← match the same guard as store/show
+
+        $profil = Profil::where('user_id', $user->id)->first();
 
         if (!$profil) {
             return response()->json(['message' => 'Profil introuvable'], 404);

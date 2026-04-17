@@ -12,46 +12,35 @@ class ProfileCompetenceController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'profil_id' => 'required|exists:profils,id',
             'competence_id' => 'required|exists:competences,id',
-            'niveau' => 'required|in:débutant,intermédiaire,expert'
+            'niveau'        => 'required|in:débutant,intermédiaire,expert'
         ]);
 
-        $profil = Profil::findOrFail($request->profil_id);
+        $user   = auth('api')->user();
+        $profil = Profil::where('user_id', $user->id)->firstOrFail();
 
-        // vérifier si déjà attachée
         $exists = $profil->competences()
-            ->where('competence_id', $request->competence_id)
+            ->wherePivot('competence_id', $request->competence_id)
             ->exists();
 
         if ($exists) {
-            return response()->json([
-                'message' => 'Compétence déjà ajoutée'
-            ], 409);
+            return response()->json(['message' => 'Compétence déjà ajoutée'], 409);
         }
 
-        // attacher compétence avec pivot (niveau)
         $profil->competences()->attach($request->competence_id, [
             'niveau' => $request->niveau
         ]);
 
-        return response()->json([
-            'message' => 'Compétence ajoutée au profil'
-        ]);
+        return response()->json(['message' => 'Compétence ajoutée']);
     }
 
     public function destroy($competenceId, Request $request)
     {
-        $request->validate([
-            'profil_id' => 'required|exists:profils,id'
-        ]);
-
-        $profil = Profil::findOrFail($request->profil_id);
+        $user   = auth('api')->user();
+        $profil = Profil::where('user_id', $user->id)->firstOrFail();
 
         $profil->competences()->detach($competenceId);
 
-        return response()->json([
-            'message' => 'Compétence supprimée du profil'
-        ]);
+        return response()->json(['message' => 'Compétence retirée']);
     }
 }

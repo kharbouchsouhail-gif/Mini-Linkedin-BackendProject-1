@@ -2,76 +2,55 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject; // ← JWT
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasFactory, Notifiable; // ← removed HasApiTokens (Sanctum, not needed)
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'email',
         'password',
+        'role', // ← make sure this is here
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
 
-<<<<<<< HEAD
-
-
-
-    public function getJWTIdentifier() {
-        return $this -> getKey();
+    // =================== JWT ===================
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
     }
 
-    public function getJWTCustomClaims() {
+    public function getJWTCustomClaims()
+    {
         return [];
     }
 
-    public function profil() {
-        return $this -> hasOne(Profil::class);
-    }
-
-    public function offres() {
-        return $this -> hasMany(Offre::class);
-    }
-
-    public function isAdmin(): bool { return $this -> role === 'admin';} 
-    public function isRecruteur(): bool { return $this -> role === 'recruteur';} 
-    public function isCandidat(): bool { return $this -> role === 'candidat';} 
-=======
-    public function profil() {
+    // =================== Relations ===================
+    public function profil()
+    {
         return $this->hasOne(Profil::class);
     }
 
-    public function offres() {
+    public function offres()
+    {
         return $this->hasMany(Offre::class);
     }
->>>>>>> origin/Modelisation-Base-de-donnees
+
+    // =================== Role helpers ===================
+    public function isAdmin(): bool     { return $this->role === 'admin'; }
+    public function isRecruteur(): bool { return $this->role === 'recruteur'; }
+    public function isCandidat(): bool  { return $this->role === 'candidat'; }
 }
