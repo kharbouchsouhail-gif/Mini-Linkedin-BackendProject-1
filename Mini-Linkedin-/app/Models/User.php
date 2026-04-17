@@ -41,4 +41,27 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+
+
+    public function getJWTIdentifier() {
+        return $this -> getKey();
+    }
+
+    public function getJWTCustomClaims() {
+        return [];
+    }
+
+    public function profil() {
+        return $this -> hasOne(Profil::class);
+    }
+
+    public function offres() {
+        return $this -> hasMany(Offre::class);
+    }
+
+    public function isAdmin(): bool { return $this -> role === 'admin';} 
+    public function isRecruteur(): bool { return $this -> role === 'recruteur';} 
+    public function isCandidat(): bool { return $this -> role === 'candidat';} 
 }
