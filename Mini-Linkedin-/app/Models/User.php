@@ -42,6 +42,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+<<<<<<< HEAD
 
 
 
@@ -64,4 +65,13 @@ class User extends Authenticatable
     public function isAdmin(): bool { return $this -> role === 'admin';} 
     public function isRecruteur(): bool { return $this -> role === 'recruteur';} 
     public function isCandidat(): bool { return $this -> role === 'candidat';} 
+=======
+    public function profil() {
+        return $this->hasOne(Profil::class);
+    }
+
+    public function offres() {
+        return $this->hasMany(Offre::class);
+    }
+>>>>>>> origin/Modelisation-Base-de-donnees
 }
