@@ -21,7 +21,7 @@ decoupling of application logic.
 ## Installation Steps
 
 1. **Clone the project**
-   git clone https://github.com/your-repo/Mini-Linkedin.git
+   git clone [https://github.com/your-repo/Mini-Linkedin.git](https://github.com/KharbouchSouhail/Mini-Linkedin-BackendProject-1)
    cd Mini-Linkedin
 
 2. **Install dependencies**
