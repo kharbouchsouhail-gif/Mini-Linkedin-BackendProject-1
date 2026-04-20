@@ -21,8 +21,8 @@ decoupling of application logic.
 ## Installation Steps
 
 1. **Clone the project**
-   git clone [https://github.com/your-repo/Mini-Linkedin.git](https://github.com/KharbouchSouhail/Mini-Linkedin-BackendProject-1)
-   cd Mini-Linkedin
+   git clone (this repo) https://github.com/KharbouchSouhail/Mini-Linkedin-BackendProject-1
+   cd to project file
 
 3. **Install dependencies**
    composer install
@@ -35,6 +35,7 @@ decoupling of application logic.
    DB_DATABASE=your_database_name
    DB_USERNAME=your_username
    DB_PASSWORD=your_password
+   (or leave it as default and start MySql database)
 
 6. **Generate Laravel key**
    php artisan key:generate
